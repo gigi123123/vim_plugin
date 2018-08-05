@@ -1,7 +1,12 @@
 vim_plugin
 ----
-
 快速搭建 vim 开发神器
+
+快速安装
+----
+
+    curl -o- https://gitee.com/whatdy/vim_plugin/raw/master/install.sh | bash
+
 
 功能介绍
 -----
