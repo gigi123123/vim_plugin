@@ -1,6 +1,6 @@
 "============================================================================
 "File:        jruby.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Leonid Shevtsov <leonid at shevtsov dot me>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
@@ -9,19 +9,20 @@
 "             See http://sam.zoy.org/wtfpl/COPYING for more details.
 "
 "============================================================================
-
-if exists('g:loaded_syntastic_ruby_jruby_checker')
+if exists("g:loaded_syntastic_ruby_jruby_checker")
     finish
 endif
-let g:loaded_syntastic_ruby_jruby_checker = 1
+let g:loaded_syntastic_ruby_jruby_checker=1
 
-let s:save_cpo = &cpo
-set cpo&vim
+function! SyntaxCheckers_ruby_jruby_IsAvailable()
+    return executable('jruby')
+endfunction
 
-function! SyntaxCheckers_ruby_jruby_GetLocList() dict
-    let makeprg = self.makeprgBuild({
-        \ 'args': (syntastic#util#isRunningWindows() ? '-T1 -W1' : '-W1'),
-        \ 'args_after': '-c' })
+function! SyntaxCheckers_ruby_jruby_GetLocList()
+    let makeprg = syntastic#makeprg#build({
+                \ 'exe': s:exe(),
+                \ 'args': s:args(),
+                \ 'subchecker': 'jruby' })
 
     let errorformat =
         \ '%-GSyntax OK for %f,'.
@@ -32,19 +33,17 @@ function! SyntaxCheckers_ruby_jruby_GetLocList() dict
         \ '%W%f:%l: %m,'.
         \ '%-C%.%#'
 
-    let env = syntastic#util#isRunningWindows() ? {} : { 'RUBYOPT': '' }
+    return SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
+endfunction
 
-    return SyntasticMake({
-        \ 'makeprg': makeprg,
-        \ 'errorformat': errorformat,
-        \ 'env': env })
+function s:args()
+    return has('win32') ? '-W1 -T1 -c' : '-W1 -c'
+endfunction
+
+function s:exe()
+    return has('win32') ? 'jruby' : 'RUBYOPT= jruby'
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'ruby',
     \ 'name': 'jruby'})
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:

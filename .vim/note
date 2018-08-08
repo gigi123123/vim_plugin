@@ -1,0 +1,45 @@
+
+- 模式
+    nore 非递归
+    map 递归模式
+- 几种模式
+    n,v,i,c 模式
+
+删除映射关系  :unmap c
+清除全部: mapclear
+
+- tabnew 标签命令
+:tabnew 新建标签
+:tabc 关闭标签, :tabo 关闭其他所有标签 tab other closed
+
+关于切换
+:tabfirst 切换到第一个标签
+:tablast 切换到最后一个标签
+:tabp = tab previous
+:tabn = tab next
+
+查看标签
+:tabs tab show, 或者 tab的复数: tabs
+:tabe: tab edit : 在标签页中 打开 文件.
+
+- 快捷键定制
+
+F10 快捷键 ==> :tabnew
+map <F10> <Esc>:tabnew<CR>
+
+
+" 快捷键
+map <F10> <Esc>:tabnew<CR>
+map <F5> <Esc>:!!<CR>
+nmap fw     :w<CR>
+nmap fq     :q<CR>
+nmap fwq    :wq<CR>
+
+let mapleader=";"
+" ;w 保存数据
+nmap <leader>w :w<CR>
+
+" gu 变大写,gl 变小写
+" nnoremap gu gU
+" nnoremap gl gu
+

@@ -1,4 +1,4 @@
-if exists('g:loaded_syntastic_postprocess_autoload') || !exists('g:loaded_syntastic_plugin')
+if exists("g:loaded_syntastic_postprocess_autoload")
     finish
 endif
 let g:loaded_syntastic_postprocess_autoload = 1
@@ -6,79 +6,53 @@ let g:loaded_syntastic_postprocess_autoload = 1
 let s:save_cpo = &cpo
 set cpo&vim
 
-" Public functions {{{1
+function! s:compareErrorItems(a, b)
+    if a:a['bufnr'] != a:b['bufnr']
+        " group by files
+        return a:a['bufnr'] - a:b['bufnr']
+    elseif a:a['lnum'] != a:b['lnum']
+        return a:a['lnum'] - a:b['lnum']
+    elseif a:a['type'] !=? a:b['type']
+        " errors take precedence over warnings
+        return a:a['type'] ==? 'e' ? -1 : 1
+    else
+        return get(a:a, 'col') - get(a:b, 'col')
+    endif
+endfunction
 
-" merge consecutive blanks
-function! syntastic#postprocess#compressWhitespace(errors) abort " {{{2
+" natural sort
+function! syntastic#postprocess#sort(errors)
+    return sort(a:errors, 's:compareErrorItems')
+endfunction
+
+function syntastic#postprocess#compressWhitespace(errors)
+    let llist = []
+
     for e in a:errors
-        let e['text'] = substitute(e['text'], "\001", '', 'g')
         let e['text'] = substitute(e['text'], '\n', ' ', 'g')
-        let e['text'] = substitute(e['text'], '\m\s\{2,}', ' ', 'g')
-        let e['text'] = substitute(e['text'], '\m^\s\+', '', '')
-        let e['text'] = substitute(e['text'], '\m\s\+$', '', '')
+        let e['text'] = substitute(e['text'], '\s\{2,}', ' ', 'g')
+        call add(llist, e)
     endfor
 
-    return a:errors
-endfunction " }}}2
+    return llist
+endfunction
 
 " remove spurious CR under Cygwin
-function! syntastic#postprocess#cygwinRemoveCR(errors) abort " {{{2
+function! syntastic#postprocess#cygwinRemoveCR(errors)
     if has('win32unix')
+        let llist = []
+
         for e in a:errors
             let e['text'] = substitute(e['text'], '\r', '', 'g')
+            call add(llist, e)
         endfor
+    else
+        let llist = a:errors
     endif
 
-    return a:errors
-endfunction " }}}2
-
-" decode XML entities
-function! syntastic#postprocess#decodeXMLEntities(errors) abort " {{{2
-    for e in a:errors
-        let e['text'] = syntastic#util#decodeXMLEntities(e['text'])
-    endfor
-
-    return a:errors
-endfunction " }}}2
-
-" filter out errors referencing other files
-function! syntastic#postprocess#filterForeignErrors(errors) abort " {{{2
-    return filter(copy(a:errors), 'get(v:val, "bufnr") == ' . bufnr(''))
-endfunction " }}}2
-
-" make sure line numbers are not past end of buffers
-" XXX: this loads all referenced buffers in memory
-function! syntastic#postprocess#guards(errors) abort " {{{2
-    let buffers = syntastic#util#unique(map(filter(copy(a:errors), 'v:val["valid"]'), 'str2nr(v:val["bufnr"])'))
-
-    let guards = {}
-    for b in buffers
-        let guards[b] = len(getbufline(b, 1, '$'))
-    endfor
-
-    for e in a:errors
-        if e['valid'] && e['lnum'] > guards[e['bufnr']]
-            let e['lnum'] = guards[e['bufnr']]
-        endif
-    endfor
-
-    return a:errors
-endfunction " }}}2
-
-" convert error messages from UTF-8 to the current encoding
-function! syntastic#postprocess#iconv(errors) abort " {{{2
-    if has('iconv') && &encoding !=# '' && &encoding !=# 'utf-8'
-        for e in a:errors
-            let e['text'] = iconv(e['text'], "utf-8", &encoding)
-        endfor
-    endif
-
-    return a:errors
-endfunction " }}}2
-
-" }}}1
+    return llist
+endfunction
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:
+" vim: set et sts=4 sw=4:

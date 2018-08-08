@@ -9,33 +9,22 @@
 "             See http://sam.zoy.org/wtfpl/COPYING for more details.
 "============================================================================
 
-if exists('g:loaded_syntastic_json_jsonval_checker')
+if exists("g:loaded_syntastic_json_jsonval_checker")
     finish
 endif
-let g:loaded_syntastic_json_jsonval_checker = 1
+let g:loaded_syntastic_json_jsonval_checker=1
 
-let s:save_cpo = &cpo
-set cpo&vim
+function! SyntaxCheckers_json_jsonval_IsAvailable()
+    return executable('jsonval')
+endfunction
 
-function! SyntaxCheckers_json_jsonval_GetLocList() dict
+function! SyntaxCheckers_json_jsonval_GetLocList()
     " based on https://gist.github.com/1196345
-    let makeprg = self.makeprgBuild({})
-
-    let errorformat =
-        \ '%E%f: %m at line %l,' .
-        \ '%-G%.%#'
-
-    return SyntasticMake({
-        \ 'makeprg': makeprg,
-        \ 'errorformat': errorformat,
-        \ 'defaults': {'bufnr': bufnr('')} })
+    let makeprg = syntastic#makeprg#build({ 'exe': 'jsonval', 'subchecker': 'jsonval' })
+    let errorformat = '%E%f:\ %m\ at\ line\ %l,%-G%.%#'
+    return SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat, 'defaults': {'bufnr': bufnr('')} })
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'json',
     \ 'name': 'jsonval'})
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:

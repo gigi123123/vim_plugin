@@ -1,6 +1,6 @@
 "============================================================================
-"File:        z80syntaxchecker.vim
-"Description: Syntax checking plugin for syntastic
+"File:        z80.vim
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Romain Giot <giot.romain at gmail dot com>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
@@ -10,30 +10,28 @@
 "
 "============================================================================
 
-if exists('g:loaded_syntastic_z80_z80syntaxchecker_checker')
+if exists("g:loaded_syntastic_z80_z80syntaxchecker_checker")
     finish
 endif
-let g:loaded_syntastic_z80_z80syntaxchecker_checker = 1
+let g:loaded_syntastic_z80_z80syntaxchecker_checker=1
 
-let s:save_cpo = &cpo
-set cpo&vim
+"bail if the user doesnt have z80_syntax_checker.py installed
+"To obtain this application there are two solutions:
+" - Install this python package: https://github.com/rgiot/pycpcdemotools
+" - Copy/paste this script in your search path: https://raw.github.com/rgiot/pycpcdemotools/master/cpcdemotools/source_checker/z80_syntax_checker.py
+function! SyntaxCheckers_z80_z80syntaxchecker_IsAvailable()
+    return executable("z80_syntax_checker.py")
+endfunction
 
-function! SyntaxCheckers_z80_z80syntaxchecker_GetLocList() dict
-    let makeprg = self.makeprgBuild({})
-
+function! SyntaxCheckers_z80_z80syntaxchecker_GetLocList()
+    let makeprg = syntastic#makeprg#build({
+        \ 'exe': 'z80_syntax_checker.py',
+        \ 'subchecker': 'z80syntaxchecker' })
     let errorformat =  '%f:%l %m'
-
-    return SyntasticMake({
-        \ 'makeprg': makeprg,
-        \ 'errorformat': errorformat })
+    let loclist = SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
+    return loclist
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'z80',
-    \ 'name': 'z80syntaxchecker',
-    \ 'exec': 'z80_syntax_checker.py'})
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:
+    \ 'name': 'z80syntaxchecker'})

@@ -1,6 +1,6 @@
 "============================================================================
 "File:        coffee.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Lincoln Stoll <l@lds.li>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
@@ -9,29 +9,20 @@
 "             See http://sam.zoy.org/wtfpl/COPYING for more details.
 "
 "============================================================================
-"
-" Note: this script requires CoffeeScript version 1.6.2 or newer.
-"
-
-if exists('g:loaded_syntastic_coffee_coffee_checker')
+if exists("g:loaded_syntastic_coffee_coffee_checker")
     finish
 endif
-let g:loaded_syntastic_coffee_coffee_checker = 1
+let g:loaded_syntastic_coffee_coffee_checker=1
 
-let s:save_cpo = &cpo
-set cpo&vim
-
-function! SyntaxCheckers_coffee_coffee_IsAvailable() dict
-    if !executable(self.getExec())
-        return 0
-    endif
-    let ver = self.getVersion(self.getExecEscaped() . ' --version 2>' . syntastic#util#DevNull())
-    return syntastic#util#versionIsAtLeast(ver, [1, 6, 2])
+function! SyntaxCheckers_coffee_coffee_IsAvailable()
+    return executable("coffee")
 endfunction
 
-function! SyntaxCheckers_coffee_coffee_GetLocList() dict
-    let makeprg = self.makeprgBuild({ 'args_after': '-cp' })
-
+function! SyntaxCheckers_coffee_coffee_GetLocList()
+    let makeprg = syntastic#makeprg#build({
+                \ 'exe': 'coffee',
+                \ 'args': '--lint',
+                \ 'subchecker': 'coffee' })
     let errorformat =
         \ '%E%f:%l:%c: %trror: %m,' .
         \ 'Syntax%trror: In %f\, %m on line %l,' .
@@ -43,16 +34,9 @@ function! SyntaxCheckers_coffee_coffee_GetLocList() dict
         \ '%-Z%p^,' .
         \ '%-G%.%#'
 
-    return SyntasticMake({
-        \ 'makeprg': makeprg,
-        \ 'errorformat': errorformat })
+    return SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'coffee',
     \ 'name': 'coffee'})
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:

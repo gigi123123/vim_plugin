@@ -1,6 +1,6 @@
 "============================================================================
 "File:        make.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Gregor Uhlenheuer <kongo2002 at gmail dot com>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
@@ -10,16 +10,21 @@
 "
 "============================================================================
 
-if exists('g:loaded_syntastic_c_make_checker')
+if exists('loaded_make_syntax_checker')
     finish
 endif
-let g:loaded_syntastic_c_make_checker = 1
+let loaded_make_syntax_checker = 1
+
+function SyntaxCheckers_c_make_IsAvailable()
+    return executable('make')
+endfunction
 
 let s:save_cpo = &cpo
 set cpo&vim
 
-function! SyntaxCheckers_c_make_GetLocList() dict
-    let makeprg = self.makeprgBuild({ 'args': '-sk', 'fname': '' })
+function! SyntaxCheckers_c_make_GetLocList()
+
+    let makeprg = 'make -sk'
 
     let errorformat =
         \ '%-G%f:%s:,' .
@@ -39,13 +44,14 @@ function! SyntaxCheckers_c_make_GetLocList() dict
     endif
 
     " process makeprg
-    let errors = SyntasticMake({
-        \ 'makeprg': makeprg,
+    let errors = SyntasticMake({ 'makeprg': makeprg,
         \ 'errorformat': errorformat })
 
     " filter the processed errors if desired
-    if exists('g:syntastic_c_remove_include_errors') && g:syntastic_c_remove_include_errors != 0
-        return filter(errors, 'has_key(v:val, "bufnr") && v:val["bufnr"] == ' . bufnr(''))
+    if exists('g:syntastic_c_remove_include_errors') &&
+            \ g:syntastic_c_remove_include_errors != 0
+        return filter(errors,
+            \ 'has_key(v:val, "bufnr") && v:val["bufnr"]=='.bufnr(''))
     else
         return errors
     endif
@@ -57,5 +63,3 @@ call g:SyntasticRegistry.CreateAndRegisterChecker({
 
 let &cpo = s:save_cpo
 unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:

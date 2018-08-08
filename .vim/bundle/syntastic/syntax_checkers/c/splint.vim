@@ -1,6 +1,6 @@
 "============================================================================
 "File:        splint.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  LCD 47 <lcd047 at gmail dot com>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
@@ -8,29 +8,37 @@
 "             Want To Public License, Version 2, as published by Sam Hocevar.
 "             See http://sam.zoy.org/wtfpl/COPYING for more details.
 "============================================================================
+"
+" The setting 'g:syntastic_splint_config_file' allows you to define a file
+" that contains additional compiler arguments like include directories or
+" CFLAGS. The file is expected to contain one option per line. If none is
+" given the filename defaults to '.syntastic_splint_config':
+"
+"   let g:syntastic_splint_config_file = '.config'
 
-if exists('g:loaded_syntastic_c_splint_checker')
+if exists("loaded_splint_syntax_checker")
     finish
 endif
-let g:loaded_syntastic_c_splint_checker = 1
+let loaded_splint_syntax_checker = 1
 
-let s:save_cpo = &cpo
-set cpo&vim
+function! SyntaxCheckers_c_splint_IsAvailable()
+    return executable("splint")
+endfunction
 
-function! SyntaxCheckers_c_splint_GetLocList() dict
-    let buf = bufnr('')
+if !exists('g:syntastic_splint_config_file')
+    let g:syntastic_splint_config_file = '.syntastic_splint_config'
+endif
 
-    let makeprg = self.makeprgBuild({
-        \ 'args': syntastic#c#ReadConfig(syntastic#util#bufVar(buf, 'splint_config_file')),
-        \ 'args_after': '-showfunc -hints +quiet' })
+function! SyntaxCheckers_c_splint_GetLocList()
+    let makeprg = syntastic#makeprg#build({
+        \ 'exe': 'splint',
+        \ 'post_args': '-showfunc -hints +quiet ' . syntastic#c#ReadConfig(g:syntastic_splint_config_file),
+        \ 'subchecker': 'splint' })
 
     let errorformat =
         \ '%-G%f:%l:%v: %[%#]%[%#]%[%#] Internal Bug %.%#,' .
-        \ '%-G%f(%l\,%v): %[%#]%[%#]%[%#] Internal Bug %.%#,' .
         \ '%W%f:%l:%v: %m,' .
-        \ '%W%f(%l\,%v): %m,' .
         \ '%W%f:%l: %m,' .
-        \ '%W%f(%l): %m,' .
         \ '%-C %\+In file included from %.%#,' .
         \ '%-C %\+from %.%#,' .
         \ '%+C %.%#'
@@ -46,8 +54,3 @@ endfunction
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'c',
     \ 'name': 'splint'})
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:

@@ -1,9 +1,32 @@
-if exists('g:loaded_syntastic_notifier_signs') || !exists('g:loaded_syntastic_plugin')
+if exists("g:loaded_syntastic_notifier_signs")
     finish
 endif
 let g:loaded_syntastic_notifier_signs = 1
 
-" Initialisation {{{1
+if !exists("g:syntastic_enable_signs")
+    let g:syntastic_enable_signs = 1
+endif
+
+if !exists("g:syntastic_error_symbol")
+    let g:syntastic_error_symbol = '>>'
+endif
+
+if !exists("g:syntastic_warning_symbol")
+    let g:syntastic_warning_symbol = '>>'
+endif
+
+if !exists("g:syntastic_style_error_symbol")
+    let g:syntastic_style_error_symbol = 'S>'
+endif
+
+if !exists("g:syntastic_style_warning_symbol")
+    let g:syntastic_style_warning_symbol = 'S>'
+endif
+
+if !has('signs')
+    let g:syntastic_enable_signs = 0
+endif
+
 
 " start counting sign ids at 5000, start here to hopefully avoid conflicting
 " with any other code that places signs (not sure if this precaution is
@@ -15,41 +38,35 @@ let g:SyntasticSignsNotifier = {}
 
 let s:setup_done = 0
 
-" }}}1
-
 " Public methods {{{1
 
-function! g:SyntasticSignsNotifier.New() abort " {{{2
+function! g:SyntasticSignsNotifier.New()
     let newObj = copy(self)
-    return newObj
-endfunction " }}}2
 
-function! g:SyntasticSignsNotifier.enabled() abort " {{{2
-    return has('signs') && syntastic#util#var('enable_signs')
-endfunction " }}}2
-
-function! g:SyntasticSignsNotifier.refresh(loclist) abort " {{{2
-    call syntastic#log#debug(g:_SYNTASTIC_DEBUG_NOTIFICATIONS, 'signs: refresh')
-
-    let old_signs = copy(self._bufSignIds())
-    if self.enabled()
-        if !s:setup_done
-            call self._setup()
-            let s:setup_done = 1
-            lockvar s:setup_done
-        endif
-
-        call self._signErrors(a:loclist)
+    if !s:setup_done
+        call self._setup()
+        let s:setup_done = 1
     endif
-    call self._removeSigns(old_signs)
-endfunction " }}}2
 
-" }}}1
+    return newObj
+endfunction
+
+function! g:SyntasticSignsNotifier.enabled()
+    return exists('b:syntastic_enable_signs') ? b:syntastic_enable_signs : g:syntastic_enable_signs
+endfunction
+
+" Update the error signs
+function! g:SyntasticSignsNotifier.refresh(loclist)
+    let old_signs = copy(self._bufSignIds())
+    call self._signErrors(a:loclist)
+    call self._removeSigns(old_signs)
+    let s:first_sign_id = s:next_sign_id
+endfunction
 
 " Private methods {{{1
 
 " One time setup: define our own sign types and highlighting
-function! g:SyntasticSignsNotifier._setup() abort " {{{2
+function! g:SyntasticSignsNotifier._setup()
     if has('signs')
         if !hlexists('SyntasticErrorSign')
             highlight link SyntasticErrorSign error
@@ -71,68 +88,55 @@ function! g:SyntasticSignsNotifier._setup() abort " {{{2
         endif
 
         " define the signs used to display syntax and style errors/warns
-        execute 'sign define SyntasticError text=' . g:syntastic_error_symbol .
+        exe 'sign define SyntasticError text=' . g:syntastic_error_symbol .
             \ ' texthl=SyntasticErrorSign linehl=SyntasticErrorLine'
-        execute 'sign define SyntasticWarning text=' . g:syntastic_warning_symbol .
+        exe 'sign define SyntasticWarning text=' . g:syntastic_warning_symbol .
             \ ' texthl=SyntasticWarningSign linehl=SyntasticWarningLine'
-        execute 'sign define SyntasticStyleError text=' . g:syntastic_style_error_symbol .
+        exe 'sign define SyntasticStyleError text=' . g:syntastic_style_error_symbol .
             \ ' texthl=SyntasticStyleErrorSign linehl=SyntasticStyleErrorLine'
-        execute 'sign define SyntasticStyleWarning text=' . g:syntastic_style_warning_symbol .
+        exe 'sign define SyntasticStyleWarning text=' . g:syntastic_style_warning_symbol .
             \ ' texthl=SyntasticStyleWarningSign linehl=SyntasticStyleWarningLine'
     endif
-endfunction " }}}2
+endfunction
 
 " Place signs by all syntax errors in the buffer
-function! g:SyntasticSignsNotifier._signErrors(loclist) abort " {{{2
+function! g:SyntasticSignsNotifier._signErrors(loclist)
     let loclist = a:loclist
-    if !loclist.isEmpty()
+    if loclist.hasErrorsOrWarningsToDisplay()
 
+        " make sure the errors come after the warnings, so that errors mask
+        " the warnings on the same line, not the other way around
         let buf = bufnr('')
-        if !bufloaded(buf)
-            " signs can be placed only in loaded buffers
-            return
-        endif
-
-        " errors come first, so that they are not masked by warnings
-        let issues = copy(loclist.errors())
-        call extend(issues, loclist.warnings())
+        let issues = loclist.quietWarnings() ? [] : loclist.warnings()
+        call extend(issues, loclist.errors())
         call filter(issues, 'v:val["bufnr"] == buf')
-        let seen = {}
 
         for i in issues
-            if i['lnum'] > 0 && !has_key(seen, i['lnum'])
-                let seen[i['lnum']] = 1
+            let sign_severity = i['type'] ==? 'W' ? 'Warning' : 'Error'
+            let sign_subtype = get(i, 'subtype', '')
+            let sign_type = 'Syntastic' . sign_subtype . sign_severity
 
-                let sign_severity = i['type'] ==? 'W' ? 'Warning' : 'Error'
-                let sign_subtype = get(i, 'subtype', '')
-                let sign_type = 'Syntastic' . sign_subtype . sign_severity
-
-                execute 'sign place ' . s:next_sign_id . ' line=' . i['lnum'] . ' name=' . sign_type . ' buffer=' . i['bufnr']
-                call add(self._bufSignIds(), s:next_sign_id)
-                let s:next_sign_id += 1
-            endif
+            exec "sign place " . s:next_sign_id . " line=" . i['lnum'] . " name=" . sign_type . " buffer=" . i['bufnr']
+            call add(self._bufSignIds(), s:next_sign_id)
+            let s:next_sign_id += 1
         endfor
     endif
-endfunction " }}}2
+endfunction
 
 " Remove the signs with the given ids from this buffer
-function! g:SyntasticSignsNotifier._removeSigns(ids) abort " {{{2
-    if has('signs')
-        for s in reverse(copy(a:ids))
-            execute 'sign unplace ' . s
-            call remove(self._bufSignIds(), index(self._bufSignIds(), s))
-        endfor
-    endif
-endfunction " }}}2
+function! g:SyntasticSignsNotifier._removeSigns(ids)
+    for i in a:ids
+        exec "sign unplace " . i
+        call remove(self._bufSignIds(), index(self._bufSignIds(), i))
+    endfor
+endfunction
 
 " Get all the ids of the SyntaxError signs in the buffer
-function! g:SyntasticSignsNotifier._bufSignIds() abort " {{{2
-    if !exists('b:syntastic_private_sign_ids')
-        let b:syntastic_private_sign_ids = []
+function! g:SyntasticSignsNotifier._bufSignIds()
+    if !exists("b:syntastic_sign_ids")
+        let b:syntastic_sign_ids = []
     endif
-    return b:syntastic_private_sign_ids
-endfunction " }}}2
-
-" }}}1
+    return b:syntastic_sign_ids
+endfunction
 
 " vim: set sw=4 sts=4 et fdm=marker:

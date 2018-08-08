@@ -1,0 +1,62 @@
+
+set rtp+=~/.vim/bundle/vundle/
+call vundle#rc()
+
+" let Vundle manage Vundle
+" required!
+Bundle 'gmarik/vundle'
+
+" My Bundles here:
+"
+" original repos on github
+Bundle 'tpope/vim-fugitive'
+Bundle 'rstacruz/sparkup', {'rtp': 'vim/'}
+Bundle 'Yggdroot/indentLine'
+let g:indentLine_char = '┊'
+"ndle 'tpope/vim-rails.git'
+" vim-scripts repos
+Bundle 'L9'
+Bundle 'FuzzyFinder'
+" non github repos
+Bundle 'https://github.com/wincent/command-t.git'
+Bundle 'Auto-Pairs'
+Bundle 'python-imports.vim'
+Bundle 'CaptureClipboard'
+Bundle 'ctrlp-modified.vim'
+Bundle 'last_edit_marker.vim'
+Bundle 'synmark.vim'
+"Bundle 'Python-mode-klen'
+Bundle 'SQLComplete.vim'
+Bundle 'Javascript-OmniCompletion-with-YUI-and-j'
+"Bundle 'JavaScript-Indent'
+"Bundle 'Better-Javascript-Indentation'
+Bundle 'jslint.vim'
+Bundle "pangloss/vim-javascript"
+Bundle 'Vim-Script-Updater'
+Bundle 'ctrlp.vim'
+Bundle 'tacahiroy/ctrlp-funky'
+Bundle 'jsbeautify'
+Bundle 'The-NERD-Commenter'
+"django
+Bundle 'django_templates.vim'
+Bundle 'Django-Projects'
+
+"Bundle 'FredKSchott/CoVim'
+"Bundle 'djangojump'
+" ...
+let g:html_indent_inctags = "html,body,head,tbody"
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1 = "inc"
+
+filetype plugin indent on     " required!
+"
+"ctrlp设置
+"
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,*.pyc,*.png,*.jpg,*.gif     " MacOSX/Linux
+set wildignore+=*\\tmp\\*,*.swp,*.zip,*.exe,*.pyc,*.png,*.jpg,*.gif  " Windows
+
+let g:ctrlp_custom_ignore = '\v[\/]\.(git|hg|svn)$'
+let g:ctrlp_custom_ignore = '\v\.(exe|so|dll)$'
+let g:ctrlp_extensions = ['funky']
+
+let NERDTreeIgnore=['\.pyc']

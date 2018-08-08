@@ -1,6 +1,6 @@
 "============================================================================
 "File:        cucumber.vim
-"Description: Syntax checking plugin for syntastic
+"Description: Syntax checking plugin for syntastic.vim
 "Maintainer:  Martin Grenfell <martin.grenfell at gmail dot com>
 "License:     This program is free software. It comes without any warranty,
 "             to the extent permitted by applicable law. You can redistribute
@@ -10,33 +10,29 @@
 "
 "============================================================================
 
-if exists('g:loaded_syntastic_cucumber_cucumber_checker')
+if exists("g:loaded_syntastic_cucumber_cucumber_checker")
     finish
 endif
-let g:loaded_syntastic_cucumber_cucumber_checker = 1
+let g:loaded_syntastic_cucumber_cucumber_checker=1
 
-let s:save_cpo = &cpo
-set cpo&vim
+function! SyntaxCheckers_cucumber_cucumber_IsAvailable()
+    return executable('cucumber')
+endfunction
 
-function! SyntaxCheckers_cucumber_cucumber_GetLocList() dict
-    let makeprg = self.makeprgBuild({ 'args_after': '--dry-run --quiet --strict --format pretty' })
-
+function! SyntaxCheckers_cucumber_cucumber_GetLocList()
+    let makeprg = syntastic#makeprg#build({
+                \ 'exe': 'cucumber',
+                \ 'args': '--dry-run --quiet --strict --format pretty',
+                \ 'subchecker': 'cucumber' })
     let errorformat =
         \ '%f:%l:%c:%m,' .
         \ '%W      %.%# (%m),' .
         \ '%-Z%f:%l:%.%#,'.
         \ '%-G%.%#'
 
-    return SyntasticMake({
-        \ 'makeprg': makeprg,
-        \ 'errorformat': errorformat })
+    return SyntasticMake({ 'makeprg': makeprg, 'errorformat': errorformat })
 endfunction
 
 call g:SyntasticRegistry.CreateAndRegisterChecker({
     \ 'filetype': 'cucumber',
     \ 'name': 'cucumber'})
-
-let &cpo = s:save_cpo
-unlet s:save_cpo
-
-" vim: set sw=4 sts=4 et fdm=marker:

@@ -1,0 +1,199 @@
+" ==========================================
+"  bundle 插件管理和配置项
+" -----------------#github
+"   插件来自 github，只需要 ： 作者名/项目名
+"  Bundle 'tomasr/molokai'
+"   插件来自 vim-scripts，直接写插件名就行了
+"  Bundle 'L9'
+"   如使用自己的git库的插件，像下面这样做
+"  Bundle 'git://git.wincent.com/command-t.git'
+" ---------------#git库在本地机器的情况
+"   如使用自己的git库在本地机器，像下面这样做
+"  Bundle 'file:///Users/gmarik/path/to/plugin'
+"
+" ==========================================
+
+if &compatible
+set nocompatible
+end
+
+" ################### Bundles 配置 #########################
+" 使用Vundle来管理插件
+" vim plugin bundle control, command model
+"     :BundleInstall     install 安装配置的插件
+"     :BundleInstall!    update  更新
+"     :BundleClean       remove plugin not in list 删除本地无用插件
+"     :BundleList        列举出列表中(.vimrc中)配置的所有插件
+"     :BundleSearch foo -查找foo插件
+"     :BundleSearch! foo -刷新foo插件缓存
+"     :BundleClean! -清除列表中没有的插件
+
+filetype plugin on
+set rtp+=~/.vim/bundle/vundle
+call vundle#rc()
+" ##### 插件管理工具
+Bundle "gmarik/vundle"
+
+" ###### 状态栏效果 推荐：***
+Bundle "bling/vim-airline"
+
+
+" ###### 文件模糊匹配查找 推荐：****
+Bundle "kien/ctrlp.vim"
+
+" ###### 函数模糊匹配查找(,fu) 推荐：****
+Bundle 'tacahiroy/ctrlp-funky'
+
+" ###### 自动注释 推荐：*****
+Bundle 'scrooloose/nerdcommenter'
+" <leader>cc 注释选中内容
+" <leader>cu 取消选中注释
+" <leader>c$ 从当前光标开始到行尾注释掉
+let g:NERDSpaceDelims=1
+
+" ##### 代码片段快速插入
+Bundle 'SirVer/ultisnips'
+"   Snippets are separated from the engine. Add this if you want them:
+
+
+" #### 主要用于 C/C++ 代码补全，需要 ctag 支持
+Bundle 'vim-scripts/OmniCppComplete'
+
+
+" ###### 括号自动匹配 推荐：****
+Bundle 'jiangmiao/Auto-Pairs'
+
+
+" ###### 主题 Solarized
+Bundle "altercation/vim-colors-solarized"
+if filereadable(expand("~/.vim/bundle/vim-colors-solarized/colors/solarized.vim"))
+let g:solarized_termcolors=256
+let g:solarized_termtrans=1
+let g:solarized_contrast="normal"
+let g:solarized_visibility="normal"
+" 主题使用
+set background=dark
+"set background=light
+set t_Co=256
+colorscheme solarized
+endif
+
+" ######  缩进引导线 推荐：****
+Bundle "nathanaelkane/vim-indent-guides"
+" 随 vim 自启动
+let g:indent_guides_enable_on_vim_startup=0
+        " 从第二层开始可视化显示缩进
+let g:indent_guides_start_level=1
+        " 色块宽度
+let g:indent_guides_guide_size=1
+        " 快捷键 i 开/关缩进可视化
+:nmap <silent> <Leader>i <Plug>IndentGuidesToggle
+
+
+" ###### 自动补全工具 *****
+Bundle "vim-scripts/AutoComplPop"
+
+" ###### python 推荐：****
+" Python 快捷操作
+Bundle 'yssource/python.vim'
+" Bundle 'python_match.vim'
+" python 自动补全
+" Bundle 'pythoncomplete'
+
+" ##### Python 代码补全
+Bundle 'vim-scripts/Pydiction'
+let g:pydiction_location = '~/.vim/bundle/Pydiction/complete-dict'
+let g:pydiction_menu_height = 3
+
+" ##### 快速去行尾空格
+Bundle 'bronson/vim-trailing-whitespace'
+" 下列文件类型中的行尾空格tab不高亮显示
+let g:extra_whitespace_ignored_filetypes = ['unite', 'mkd', 'h', 'hpp', 'c', 'cpp', 'py']
+map <leader>, :FixWhitespace<cr>
+
+" ##### 显示marks - 方便自己进行标记和跳转
+" m[a-zA-Z] add mark
+" '[a-zA-Z] go to mark
+Bundle "kshenoy/vim-signature"
+" 书签设定。mx，设定/取消当前行名为 x 的标签；m,，自动设定下一个可用书签名，
+"   前面提说，独立书签名是不能重复的，在你已经有了多个独立书签，
+"   当想再设置书签时，需要记住已经设定的所有书签名，否则很可能会将已有的书签冲掉，这可不好，
+"   所以，vim-signature 为你提供了 m, 快捷键，
+"   自动帮你选定下一个可用独立书签名；mda，删除当前文件中所有独立书签。
+" 书签罗列。ms，罗列出当前文件中所有书签，选中后回车可直接跳转；
+" 书签跳转。mn，按行号前后顺序，跳转至下个独立书签；
+"   mp，按行号前后顺序，跳转至前个独立书签。
+"   书签跳转方式很多，除了这里说的行号前后顺序，
+"   还可以基于书签名字母顺序跳转、分类书签同类跳转、分类书签不同类间跳转等等。
+let g:SignatureMap = {
+        \ 'Leader'             :  "m",
+        \ 'PlaceNextMark'      :  "m,",
+        \ 'ToggleMarkAtLine'   :  "m.",
+        \ 'PurgeMarksAtLine'   :  "m-",
+        \ 'DeleteMark'         :  "dm",
+        \ 'PurgeMarks'         :  "mda",
+        \ 'PurgeMarkers'       :  "m<BS>",
+        \ 'GotoNextLineAlpha'  :  "']",
+        \ 'GotoPrevLineAlpha'  :  "'[",
+        \ 'GotoNextSpotAlpha'  :  "`]",
+        \ 'GotoPrevSpotAlpha'  :  "`[",
+        \ 'GotoNextLineByPos'  :  "]'",
+        \ 'GotoPrevLineByPos'  :  "['",
+        \ 'GotoNextSpotByPos'  :  "mn",
+        \ 'GotoPrevSpotByPos'  :  "mp",
+        \ 'GotoNextMarker'     :  "[+",
+        \ 'GotoPrevMarker'     :  "[-",
+        \ 'GotoNextMarkerAny'  :  "]=",
+        \ 'GotoPrevMarkerAny'  :  "[=",
+        \ 'ListLocalMarks'     :  "ms",
+        \ 'ListLocalMarkers'   :  "m?"
+        \ }"]]]']"}
+
+" ##### 选中区块
+Bundle 'terryma/vim-expand-region'
+vmap v <Plug>(expand_region_expand)
+vmap V <Plug>(expand_region_shrink)
+
+" ##### 多光标选中编辑
+Bundle 'terryma/vim-multiple-cursors'
+let g:multi_cursor_use_default_mapping=0
+" Default mapping
+let g:multi_cursor_next_key='<C-m>'
+let g:multi_cursor_prev_key='<C-p>'
+let g:multi_cursor_skip_key='<C-x>'
+let g:multi_cursor_quit_key='<Esc>'
+
+
+
+" ##### 更高效的移动 [,, + w/fx]
+Bundle 'Lokaltog/vim-easymotion'
+let g:EasyMotion_smartcase = 1
+"let g:EasyMotion_startofline = 0 " keep cursor colum when JK motion
+map <Leader><leader>h <Plug>(easymotion-linebackward)
+map <Leader><Leader>j <Plug>(easymotion-j)
+map <Leader><Leader>k <Plug>(easymotion-k)
+map <Leader><leader>l <Plug>(easymotion-lineforward)
+        " 重复上一次操作, 类似repeat插件, 很强大
+map <Leader><leader>. <Plug>(easymotion-repeat)
+
+" ##### 目录导航
+Bundle 'scrooloose/nerdtree'
+let NERDTreeHighlightCursorline=1
+let NERDTreeIgnore=[ '\.pyc$', '\.pyo$', '\.obj$', '\.o$', '\.so$', '\.egg$', '^\.git$', '^\.svn$', '^\.hg$' ]
+"close vim if the only window left open is a NERDTree
+autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | end
+" s/v 分屏打开文件
+let g:NERDTreeMapOpenSplit = 's'
+let g:NERDTreeMapOpenVSplit = 'v'
+
+
+if filereadable(expand("~/.vimrc.bundles.local"))
+source ~/.vimrc.bundles.local
+endif
+
+" ################## 插件配置结束 ###########################
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on     " required!
+
+
