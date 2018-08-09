@@ -5,7 +5,7 @@ vim_plugin
 快速安装
 ----
 
-    curl -o- https://gitee.com/whatdy/vim_plugin/raw/master/install.sh | bash
+    curl -o- https://gitee.com/whatdy/vim_plugin/raw/master/setup.sh | bash
 
 
 功能介绍
@@ -30,5 +30,8 @@ vim_plugin
 效果图
 ---
 
-![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc01.png)
+![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc01.png),
+
+
+![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc02.png)
 
