@@ -14,14 +14,14 @@ fi
 
 sudo easy_install -ZU autopep8 
 sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
-echo "数据备份中...\n"
+echo "数据备份中..."
 mv -f ~/.vim ~/.vim_old
 mv -f ~/.vimrc ~/.vimrc_old
 mv -f ~/.vimrc.bundles ~/.vimrc.bundles_old
 
 cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
-mv ~/vim_plugin/vim ~/.vim
-ln -s ~/.vim/.vimrc ~/.vimrc
-ln -s ~/.vim/.vimrc.bundles ~/.vimrc.bundles
+cp -r ~/vim_plugin/vim ~/.vim
+cp ~/.vim/.vimrc ~/.vimrc
+cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
 
 echo "安装完成"
