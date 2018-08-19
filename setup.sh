@@ -32,14 +32,12 @@ fi
 
 if [ ! -d "$HOME/vim_plugin" ];then
     cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
-    cp -r ~/vim_plugin/vim ~/.vim
-    cp ~/.vim/.vimrc ~/.vimrc
-    cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
-    echo "安装完成"
-else
-    echo '文件已经存在'
 fi
 
+cp -r ~/vim_plugin/vim ~/.vim
+cp ~/.vim/.vimrc ~/.vimrc
+cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
+echo "安装完成"
 
 
 
