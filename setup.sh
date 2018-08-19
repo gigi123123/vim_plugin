@@ -16,14 +16,29 @@ sudo easy_install -ZU autopep8
 sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
 echo "数据备份中..."
 
-mv -f ~/.vim ~/.back/.vim
-mv -f ~/.vimrc ~/.back/.vimrc
-mv -f ~/.vimrc.bundles ~/.back/.vimrc.bundles
 
-cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
 
-cp -r ~/vim_plugin/vim ~/.vim
-cp ~/.vim/.vimrc ~/.vimrc
-cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
+# 文件备份
+mkdir ~/.back
+if [ -f "~/.vim" ];then
+    mv -f ~/.vim ~/.back/.vim
+fi
+if [ -f "~/.vimrc" ];then
+    mv -f ~/.vimrc ~/.back/.vimrc
+fi
+if [ -f "~/.vimrc.bundles" ];then
+    mv -f ~/.vimrc.bundles ~/.back/.vimrc.bundles
+fi
 
-echo "安装完成"
+if [ ! -d "~/vim_plugin" ];then
+    cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
+    cp -r ~/vim_plugin/vim ~/.vim
+    cp ~/.vim/.vimrc ~/.vimrc
+    cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
+    echo "安装完成"
+else
+    echo '文件已经存在'
+fi
+
+
+
