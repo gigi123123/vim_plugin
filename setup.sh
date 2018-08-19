@@ -30,7 +30,7 @@ if [ -f "~/.vimrc.bundles" ];then
     mv -f ~/.vimrc.bundles ~/.back/.vimrc.bundles
 fi
 
-if [ ! -d "~/vim_plugin" ];then
+if [ ! -d "$HOME/vim_plugin" ];then
     cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
     cp -r ~/vim_plugin/vim ~/.vim
     cp ~/.vim/.vimrc ~/.vimrc
@@ -39,6 +39,7 @@ if [ ! -d "~/vim_plugin" ];then
 else
     echo '文件已经存在'
 fi
+
 
 
 
