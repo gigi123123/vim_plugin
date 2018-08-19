@@ -15,7 +15,10 @@ fi
 sudo easy_install -ZU autopep8 
 sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
 echo "数据备份中..."
-mkdir ~/.back
+if [ ! -d "/data/" ];then
+    mkdir ~/.back
+fi
+
 mv -f ~/.vim ~/.back/.vim
 mv -f ~/.vimrc ~/.back/.vimrc
 mv -f ~/.vimrc.bundles ~/.back/.vimrc.bundles
