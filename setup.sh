@@ -21,8 +21,12 @@ mv -f ~/.vimrc ~/.back/.vimrc
 mv -f ~/.vimrc.bundles ~/.back/.vimrc.bundles
 
 cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
+
+echo '--> 1'
 cp -r ~/vim_plugin/vim ~/.vim
+echo '--> 2'
 cp ~/.vim/.vimrc ~/.vimrc
+echo '--> 3'
 cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
 
 echo "安装完成"
