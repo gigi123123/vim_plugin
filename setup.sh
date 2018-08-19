@@ -29,5 +29,4 @@ cp -r ~/vim_plugin/vim ~/.vim
 cp ~/.vim/.vimrc ~/.vimrc
 cp ~/.vim/.vimrc.bundles ~/.vimrc.bundles
 
-rm -rf ~/vim_plugin
 echo "安装完成"
