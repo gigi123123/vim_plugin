@@ -23,6 +23,13 @@ vim_plugin
 - 标签导航
 - 括号显示增强
 - Markdown
+- 集成 go 语言开发环境
+
+go 语言如果报错(vim-go: could not find 'gotags'. Run :GoInstallBinaries to fix it)需要执行一下操作:
+    # 安装需要的包
+    :GoInstallBinaries
+
+
 
 
 
