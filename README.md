@@ -38,7 +38,6 @@ go 语言如果报错(vim-go: could not find 'gotags'. Run :GoInstallBinaries to
 ---
 
 ![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc01.png),
-
-
 ![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc02.png)
+![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc03.png)
 
