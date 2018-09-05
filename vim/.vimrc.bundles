@@ -63,6 +63,9 @@ Bundle 'vim-scripts/OmniCppComplete'
 " ###### 括号自动匹配 推荐：****
 Bundle 'jiangmiao/Auto-Pairs'
 
+" ###### golang
+Bundle 'fatih/vim-go'
+let g:go_version_warning = 0
 
 " ###### 主题 Solarized
 Bundle "altercation/vim-colors-solarized"
