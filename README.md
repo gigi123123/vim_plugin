@@ -36,11 +36,18 @@ go,python 相关文档提示:  `shift + k`
     go get -u github.com/zmb3/gogetdoc
 
 
-
 效果图
 ---
 
 ![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc01.png),
 ![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc02.png)
 ![image](https://gitee.com/whatdy/vim_plugin/raw/master/doc/doc03.png)
+
+更新日志:
+----
+####2018年10月04日
+- thinca/vim-quickrun 插件:快速运行py,golang等语言:快捷键 (F10)
+
+
+
 
