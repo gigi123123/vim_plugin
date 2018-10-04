@@ -63,9 +63,6 @@ Bundle 'vim-scripts/OmniCppComplete'
 " ###### 括号自动匹配 推荐：****
 Bundle 'jiangmiao/Auto-Pairs'
 
-" ###### golang
-Bundle 'fatih/vim-go'
-let g:go_version_warning = 0
 
 " ###### 主题 Solarized
 Bundle "altercation/vim-colors-solarized"
@@ -75,10 +72,10 @@ let g:solarized_termtrans=1
 let g:solarized_contrast="normal"
 let g:solarized_visibility="normal"
 " 主题使用
-"set background=dark
+set background=dark
 "set background=light
 set t_Co=256
-"colorscheme solarized
+colorscheme solarized
 endif
 
 " ######  缩进引导线 推荐：****

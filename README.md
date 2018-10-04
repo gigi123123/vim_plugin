@@ -30,7 +30,10 @@ go 语言如果报错(vim-go: could not find 'gotags'. Run :GoInstallBinaries to
     :GoInstallBinaries
 
 
+go,python 相关文档提示:  `shift + k` 
 
+    # golang 需要安装
+    go get -u github.com/zmb3/gogetdoc
 
 
 
