@@ -25,9 +25,17 @@ vim_plugin
 - Markdown
 - 集成 go 语言开发环境
 
+#### # 部分问题
+
 go 语言如果报错(vim-go: could not find 'gotags'. Run :GoInstallBinaries to fix it)需要执行一下操作:
-    # 安装需要的包
+
+    # 首先安装 golang 语言
+    # 部分难安装的依赖包
+    cp pkg/golang.org $GOPATH/src
+    # 最后安装需要的其他包
     :GoInstallBinaries
+    # 查看效果
+    vim hello.go
 
 
 go,python 相关文档提示:  `shift + k` 
