@@ -13,24 +13,34 @@ if which brew >/dev/null;then
 fi
 
 sudo easy_install -ZU autopep8 
-sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
+# sudo ln -s /usr/bin/ctags /usr/local/bin/ctags
 echo "数据备份中..."
 
 
 
 # 文件备份
-mkdir ~/.back
-if [ -f "~/.vim" ];then
-    mv -f ~/.vim ~/.back/.vim
-fi
-if [ -f "~/.vimrc" ];then
-    mv -f ~/.vimrc ~/.back/.vimrc
-fi
-if [ -f "~/.vimrc.bundles" ];then
-    mv -f ~/.vimrc.bundles ~/.back/.vimrc.bundles
+
+back_dir=~/.back/$(date +%Y%m%d%H%M%S)
+
+if [ ! -d $back_dir  ];then
+    mkdir -p $back_dir
 fi
 
-if [ ! -d "$HOME/vim_plugin" ];then
+if [ -d ~/.vim ];then
+    echo "备份 .vim ... "
+    mv -f ~/.vim $back_dir/.vim
+fi
+if [ -f ~/.vimrc ];then
+    echo "备份 .vimrc ..."
+    mv -f ~/.vimrc $back_dir/.vimrc
+fi
+if [ -f ~/.vimrc.bundles ];then
+    echo "备份 .vimrc.bundles ..."
+    mv -f ~/.vimrc.bundles $back_dir/.vimrc.bundles
+fi
+
+if [ ! -d $HOME/vim_plugin ];then
+    echo "下载数据..."
     cd ~/ && git clone https://gitee.com/whatdy/vim_plugin.git
 fi
 
